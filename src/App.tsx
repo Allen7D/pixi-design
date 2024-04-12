@@ -1,46 +1,21 @@
 import { useEffect, useState, useRef } from 'react'
-import { Application, Assets, Sprite } from 'pixi.js'
+import { Assets, Sprite } from 'pixi.js'
 import { Designer } from './designer'
 import './App.css'
 
 // 绘制一个 Sprite
-function createSprite(app: Application) {
+function createSprite(designer: Designer) {
+  const app = designer.app
   Assets.load('vite.svg').then((texture) => {
     const sprite = new Sprite(texture)
-    sprite.x = app.renderer.width * Math.random()
-    sprite.y = app.renderer.height * Math.random()
-    sprite.anchor.x = 0.5
-    sprite.anchor.y = 0.5
+    sprite.position.set(
+      app.renderer.width * Math.random(),
+      app.renderer.height * Math.random(),
+    )
+    sprite.anchor.set(0.5) // 设置锚点为中心
 
-    sprite.interactive = true
-    let dragging = false
-
-    // 当鼠标按下时开始拖拽
-    sprite.on('pointerdown', () => {
-      sprite.alpha = 0.5
-      dragging = true
-    })
-
-    // 当鼠标抬起时停止拖拽
-    sprite.on('pointerup', () => {
-      sprite.alpha = 1
-      dragging = false
-    })
-
-    // 当鼠标在精灵外部抬起时也停止拖拽
-    sprite.on('pointerupoutside', () => {
-      sprite.alpha = 1
-      dragging = false
-    })
-
-    // 当鼠标移动时更新精灵的位置
-    sprite.on('pointermove', (event) => {
-      if (dragging) {
-        let newPosition = event.getLocalPosition(sprite.parent)
-        sprite.x = newPosition.x
-        sprite.y = newPosition.y
-      }
-    })
+    sprite.eventMode = 'static'
+    sprite.cursor = 'pointer'
 
     app.stage.addChild(sprite)
     app.ticker.add(() => {
@@ -68,7 +43,7 @@ function App() {
 
   useEffect(() => {
     if (isReady) {
-      createSprite(designer.current?.app!)
+      createSprite(designer.current!)
     }
   }, [isReady])
 
@@ -92,7 +67,7 @@ function App() {
       </button>
       <button
         onClick={() => {
-          createSprite(designer.current?.app!)
+          createSprite(designer.current!)
         }}
       >
         绘制 Sprite
