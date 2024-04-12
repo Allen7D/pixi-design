@@ -6,15 +6,45 @@ import './App.css'
 // 绘制一个 Sprite
 function createSprite(app: Application) {
   Assets.load('vite.svg').then((texture) => {
-    const bunny = new Sprite(texture)
-    bunny.x = app.renderer.width * Math.random()
-    bunny.y = app.renderer.height * Math.random()
-    bunny.anchor.x = 0.5
-    bunny.anchor.y = 0.5
+    const sprite = new Sprite(texture)
+    sprite.x = app.renderer.width * Math.random()
+    sprite.y = app.renderer.height * Math.random()
+    sprite.anchor.x = 0.5
+    sprite.anchor.y = 0.5
 
-    app.stage.addChild(bunny)
+    sprite.interactive = true
+    let dragging = false
+
+    // 当鼠标按下时开始拖拽
+    sprite.on('pointerdown', () => {
+      sprite.alpha = 0.5
+      dragging = true
+    })
+
+    // 当鼠标抬起时停止拖拽
+    sprite.on('pointerup', () => {
+      sprite.alpha = 1
+      dragging = false
+    })
+
+    // 当鼠标在精灵外部抬起时也停止拖拽
+    sprite.on('pointerupoutside', () => {
+      sprite.alpha = 1
+      dragging = false
+    })
+
+    // 当鼠标移动时更新精灵的位置
+    sprite.on('pointermove', (event) => {
+      if (dragging) {
+        let newPosition = event.getLocalPosition(sprite.parent)
+        sprite.x = newPosition.x
+        sprite.y = newPosition.y
+      }
+    })
+
+    app.stage.addChild(sprite)
     app.ticker.add(() => {
-      bunny.rotation += 0.01
+      sprite.rotation += 0.01
     })
   })
 }
