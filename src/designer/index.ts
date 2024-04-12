@@ -14,7 +14,7 @@ export class Designer {
     container.appendChild(this.app.canvas)
     this.app.stage.eventMode = 'static'
     this.app.stage.hitArea = this.app.screen // 设置点击区域为整个画布（screen 为 Rectangle 类型）
-    this.app.stage.on('pointerdown', this.onDragStart, this)
+    // this.app.stage.on('pointerdown', this.onDragStart, this)
     this.app.stage.on('pointerup', this.onDragEnd, this)
     this.app.stage.on('pointeroutside', this.onDragEnd, this)
   }

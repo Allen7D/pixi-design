@@ -17,6 +17,8 @@ function createSprite(designer: Designer) {
     sprite.eventMode = 'static'
     sprite.cursor = 'pointer'
 
+    sprite.on('pointerdown', designer.onDragStart, designer)
+
     app.stage.addChild(sprite)
     app.ticker.add(() => {
       sprite.rotation += 0.01
