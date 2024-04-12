@@ -15,4 +15,8 @@ export class Designer {
   public destroy() {
     this.app.destroy({ removeView: true })
   }
+
+  public clearCanvas() {
+    this.app.stage.removeChildren()
+  }
 }
