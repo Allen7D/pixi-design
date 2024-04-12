@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Assets, Sprite } from 'pixi.js'
+import { Assets, Sprite, Graphics } from 'pixi.js'
 import { Designer } from './designer'
 import './App.css'
 
@@ -26,6 +26,19 @@ function createSprite(designer: Designer) {
   })
 }
 
+function createRect(designer: Designer) {
+  const rect = new Graphics().rect(0, 0, 100, 100).fill('red')
+  // 先设置 pivot（确定中心点），再设置 position
+  rect.pivot.set(rect.width / 2, rect.height / 2)
+  rect.position.set(100, 100)
+  rect.eventMode = 'static'
+  rect.cursor = 'pointer'
+
+  rect.on('pointerdown', designer.onDragStart, designer)
+  console.log('rect', rect)
+  designer.app.stage.addChild(rect)
+}
+
 function App() {
   const designer = useRef<Designer | null>(null)
   const [isReady, setIsReady] = useState(false)
@@ -34,6 +47,7 @@ function App() {
     const container: HTMLElement = document.querySelector('.container')!
     designer.current = new Designer()
     designer.current.init(container).then(() => {
+      console.log('Pixi 应用初始化完成')
       setIsReady(true)
     })
 
@@ -45,13 +59,15 @@ function App() {
 
   useEffect(() => {
     if (isReady) {
+      console.log('createSprite', isReady)
       createSprite(designer.current!)
+      createRect(designer.current!)
     }
   }, [isReady])
 
   return (
     <>
-      <h1>Pixi.js + Vite + React</h1>
+      {/* <h1>Pixi.js + Vite + React</h1> */}
       <div className="container"></div>
       <button
         onClick={() => {
