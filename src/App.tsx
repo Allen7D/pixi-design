@@ -1,33 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState, useRef } from 'react'
+import { Assets, Sprite } from 'pixi.js'
+import { Designer } from './designer'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const designer = useRef<Designer | null>(null)
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const container: HTMLElement = document.querySelector('.container')!
+    designer.current = new Designer()
+    designer.current.init(container).then(() => {
+      setIsReady(true)
+    })
+
+    return () => {
+      designer.current?.destroy()
+      setIsReady(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isReady) {
+      const app = designer.current?.app!
+      // 绘制一个 Sprite
+      Assets.load('vite.svg').then((texture) => {
+        const bunny = new Sprite(texture)
+        bunny.x = app.renderer.width / 2
+        bunny.y = app.renderer.height / 2
+        bunny.anchor.x = 0.5
+        bunny.anchor.y = 0.5
+
+        app.stage.addChild(bunny)
+        app.ticker.add(() => {
+          bunny.rotation += 0.01
+        })
+      })
+    }
+  }, [isReady])
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>Pixi.js + Vite + React</h1>
+      <div className="container"></div>
+      <button
+        onClick={() => {
+          designer.current?.destroy()
+        }}
+      >
+        销毁 Pixi 应用
+      </button>
     </>
   )
 }
