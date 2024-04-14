@@ -1,4 +1,5 @@
 import { Application, FederatedPointerEvent, Sprite } from 'pixi.js'
+import { RectTool } from './tool/rect'
 
 let dragTarget: Sprite | null
 
@@ -17,6 +18,8 @@ export class Designer {
     // this.app.stage.on('pointerdown', this.onDragStart, this)
     this.app.stage.on('pointerup', this.onDragEnd, this)
     this.app.stage.on('pointeroutside', this.onDragEnd, this)
+
+    new RectTool(this)
   }
 
   public destroy() {
@@ -31,6 +34,13 @@ export class Designer {
     if (dragTarget) {
       // 也可以用 this.app.stage.toLocal，但要注意 this 的指向处理
       dragTarget.parent.toLocal(event.global, undefined, dragTarget.position)
+      //   console.log('dragTarget', dragTarget)
+      //   console.log('dragTarget.position', dragTarget.position)
+      //   console.log('event.global', event.global)
+      //   console.log(
+      //     ' event.getLocalPosition(this.app.stage)',
+      //     event.getLocalPosition(this.app.stage),
+      //   )
     }
   }
   // 记录激活的当前拖拽元素
