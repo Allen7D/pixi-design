@@ -10,7 +10,7 @@ export class Designer {
   }
 
   public async init(container: HTMLElement) {
-    await this.app.init()
+    await this.app.init({ background: '#95949A' })
     container.appendChild(this.app.canvas)
     this.app.stage.eventMode = 'static'
     this.app.stage.hitArea = this.app.screen // 设置点击区域为整个画布（screen 为 Rectangle 类型）
